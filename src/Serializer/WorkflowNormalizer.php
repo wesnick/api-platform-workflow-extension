@@ -14,16 +14,16 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface
 {
     private $workflowManager;
-    private $itemNormalizer;
+    private $decorated;
     private $customNormalizer;
 
     public function __construct(
         WorkflowManager $workflowManager,
-        NormalizerInterface $itemNormalizer,
+        NormalizerInterface $decorated,
         NormalizerInterface $customNormalizer
     ) {
-        $this->workflowManager  = $workflowManager;
-        $this->itemNormalizer   = $itemNormalizer;
+        $this->workflowManager = $workflowManager;
+        $this->decorated = $decorated;
         $this->customNormalizer = $customNormalizer;
     }
 
@@ -32,9 +32,7 @@ class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethod
      */
     public function supportsNormalization($data, $format = null): bool
     {
-        return 'jsonld' === $format
-            && is_object($data)
-            && $this->workflowManager->supportsResource(get_class($data));
+        return $this->decorated->supportsNormalization($data, $format);
     }
 
     /**
@@ -47,6 +45,12 @@ class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethod
 
     public function normalize($object, $format = null, array $context = [])
     {
+        $data = $this->decorated->normalize($object, $format, $context);
+
+        if (!$this->workflowManager->supportsResource(get_class($object))) {
+            return $data;
+        }
+
         $actions    = $this->workflowManager->getAllActions($object);
         $actionData = [];
         foreach ($actions as $action) {
@@ -57,7 +61,6 @@ class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethod
             ] + $this->customNormalizer->normalize($action, 'json');
         }
 
-        $data                    = $this->itemNormalizer->normalize($object, $format, $context);
         $data['potentialAction'] = $actionData;
 
         return $data;

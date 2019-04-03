@@ -3,7 +3,7 @@
 namespace Wesnick\Workflow\DependencyInjection\Compiler;
 
 use Wesnick\Workflow\Configuration\WorkflowConfiguration;
-use Wesnick\Workflow\Listener\SubjectValidatorListener;
+use Wesnick\Workflow\EventListener\SubjectValidatorListener;
 use Wesnick\Workflow\WorkflowManager;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -20,6 +20,11 @@ class WorkflowPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+
+        $directories = $container->getParameter('api_platform.resource_class_directories');
+        $directories[] = realpath(__DIR__.'/../../Model');
+        $container->setParameter('api_platform.resource_class_directories', $directories);
+
         if (!$container->hasDefinition('workflow.registry')) {
             return;
         }
@@ -38,7 +43,8 @@ class WorkflowPass implements CompilerPassInterface
             return [$workflowShortName, $className, $workflow, $metadataStoreDef];
         }, $registry->getMethodCalls());
 
-        $validator        = $container->getDefinition(SubjectValidatorListener::class);
+        // @TODO: add validator
+//        $validator        = $container->getDefinition(SubjectValidatorListener::class);
         $managerArguments = [];
         foreach ($workflowMap as [$workflowShortName, $className, $workflow, $metadataStoreDef]) {
             if (!in_array($workflowShortName, $arguments[$className] ?? [], true)) {
@@ -51,9 +57,10 @@ class WorkflowPass implements CompilerPassInterface
                         $metadataStoreDef,
                     ]);
                 $managerArguments[] = $currentDef;
-                $validator->addTag(
-                    'kernel.event_listener', ['event' => 'workflow.'.$workflow.'.guard', 'method' => 'onGuard']
-                );
+                // @TODO: add validator
+//                $validator->addTag(
+//                    'kernel.event_listener', ['event' => 'workflow.'.$workflow.'.guard', 'method' => 'onGuard']
+//                );
             }
         }
 

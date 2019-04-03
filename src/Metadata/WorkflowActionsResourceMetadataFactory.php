@@ -8,7 +8,7 @@ namespace Wesnick\Workflow\Metadata;
 
 use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
 use ApiPlatform\Core\Metadata\Resource\ResourceMetadata;
-use Wesnick\Workflow\Listener\DefaultTransitionApplyListener;
+use Wesnick\Workflow\EventListener\DefaultTransitionApplyListener;
 use Wesnick\Workflow\Model\WorkflowDTO;
 use Wesnick\Workflow\WorkflowManager;
 use Symfony\Component\Workflow\Definition;
@@ -58,12 +58,9 @@ class WorkflowActionsResourceMetadataFactory implements ResourceMetadataFactoryI
             'input'  => ['class' => WorkflowDTO::class, 'name' => 'WorkflowDTO'],
         ];
 
-
-        $newOperations = $this->workflowManager->getOperationsFor($resourceClass);
-
         return $resourceMetadata
             ->withAttributes($attributes)
-            ->withItemOperations(array_merge($operations, $newOperations))
+            ->withItemOperations($operations)
         ;
     }
 }

@@ -4,27 +4,26 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service class="Wesnick\Workflow\Metadata\Listener\DefaultTransitionApplyListener">
+        <service id="Wesnick\Workflow\EventListener\DefaultTransitionApplyListener" public="true">
             <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
         </service>
-        <service class="Wesnick\Workflow\Metadata\PotentialActionPropertyMetadataFactory" decorates="api_platform.metadata.property.metadata_factory">
-            <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
-            <argument type="service" id="Wesnick\Workflow\Metadata\PotentialActionPropertyMetadataFactory.inner"/>
+        <service id="Wesnick\Workflow\EventListener\SubjectValidatorListener">
+            <argument type="service" id="validator"/>
         </service>
-        <service class="Wesnick\Workflow\Metadata\WorkflowActionsResourceMetadataFactory" decorates="api_platform.metadata.resource.metadata_factory">
+        <service id="Wesnick\Workflow\Metadata\WorkflowActionsResourceMetadataFactory" decorates="api_platform.metadata.resource.metadata_factory">
             <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
             <argument type="service" id="Wesnick\Workflow\Metadata\WorkflowActionsResourceMetadataFactory.inner"/>
         </service>
-        <service class="Wesnick\Workflow\Serializer\WorkflowActionContextBuilder" decorates="api_platform.serializer.context_builder">
+        <service id="Wesnick\Workflow\Serializer\WorkflowActionContextBuilder" decorates="api_platform.serializer.context_builder">
             <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
             <argument type="service" id="Wesnick\Workflow\Serializer\WorkflowActionContextBuilder.inner"/>
         </service>
-        <service class="Wesnick\Workflow\PathResolver\WorkflowActionPathResolver" decorates="api_platform.operation_path_resolver.generator">
+        <service id="Wesnick\Workflow\PathResolver\WorkflowActionPathResolver" decorates="api_platform.operation_path_resolver.generator">
             <argument type="service" id="Wesnick\Workflow\PathResolver\WorkflowActionPathResolver.inner"/>
         </service>
 
         <service id="Wesnick\Workflow\Serializer\WorkflowActionNormalizer">
-            <argument id="serializer.normalizer.object"/>
+            <argument type="service" id="serializer.normalizer.object"/>
             <tag name="serializer.normalizer" prority="65"/>
         </service>
 
@@ -35,20 +34,20 @@
 
         <service id="Wesnick\Workflow\Serializer\WorkflowNormalizer">
             <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
-            <argument id="api_platform.jsonld.normalizer.item"/>
-            <argument id="serializer.normalizer.object"/>
+            <argument type="service" id="api_platform.jsonld.normalizer.item"/>
+            <argument type="service" id="serializer.normalizer.object"/>
             <tag name="serializer.normalizer" prority="64"/>
         </service>
 
-        <service class="Wesnick\Workflow\Transformer\DtoTransformer">
+        <service id="Wesnick\Workflow\Transformer\WorkflowDtoTransformer">
             <tag name="api_platform.data_transformer"/>
         </service>
 
-        <service class="Wesnick\Workflow\WorkflowManager">
-            <argument id="workflow.registry"/>
-            <argument id="router"/>
-            <argument/>  <!-- compiler pass -->
-            <argument id="property_accessor"/>
+        <service id="Wesnick\Workflow\WorkflowManager">
+            <argument type="service" id="workflow.registry"/>
+            <argument type="service" id="router"/>
+            <argument type="collection"/>  <!-- compiler pass -->
+            <argument type="service" id="property_accessor"/>
         </service>
 
     </services>

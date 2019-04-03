@@ -1,6 +1,6 @@
 <?php
 
-namespace Wesnick\Workflow\Listener;
+namespace Wesnick\Workflow\EventListener;
 
 use Wesnick\Workflow\Validation\WorkflowValidationStrategyInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -23,7 +23,7 @@ class SubjectValidatorListener
      * @param ValidatorInterface $validator
      * @param WorkflowValidationStrategyInterface $validationStrategy
      */
-    public function __construct(ValidatorInterface $validator, WorkflowValidationStrategyInterface $validationStrategy)
+    public function __construct(ValidatorInterface $validator, ?WorkflowValidationStrategyInterface $validationStrategy)
     {
         $this->validator = $validator;
         $this->validationStrategy = $validationStrategy;

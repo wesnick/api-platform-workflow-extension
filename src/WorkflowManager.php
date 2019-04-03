@@ -6,6 +6,7 @@
 
 namespace Wesnick\Workflow;
 
+use ApiPlatform\Core\Api\OperationType;
 use ApiPlatform\Core\Bridge\Symfony\Routing\RouteNameGenerator;
 use Wesnick\Workflow\Configuration\WorkflowConfiguration;
 use Wesnick\Workflow\Model\Action;
@@ -124,7 +125,7 @@ class WorkflowManager
 
                 $blockers = $workflow->buildTransitionBlockerList($subject, $transition->getName());
 
-                $routeName =  RouteNameGenerator::generate($resourceClass, $resourceShortName, $transition->getName());
+                $routeName =  RouteNameGenerator::generate('patch', $resourceShortName, OperationType::ITEM);
 
                 $route = $this->router->getRouteCollection()->get($routeName);
 
@@ -134,6 +135,8 @@ class WorkflowManager
                         $routeName,
                         [
                             'id' => $this->propertyAccess->getValue($subject, 'id'),
+                            'workflow' => $workflow->getName(),
+                            'transition' => $transition->getName()
                         ],
                         RouterInterface::ABSOLUTE_URL
                     )
@@ -172,7 +175,6 @@ class WorkflowManager
 
     public function getOperationsFor(string $resourceClass): array
     {
-
         $resourceShortName = substr($resourceClass, strrpos($resourceClass, '\\') + 1);
         // @TODO: how to get access to resource metadata
 
