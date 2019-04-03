@@ -6,7 +6,12 @@ Introduction
 
 This bundle tries to allow relative easy integration between the API Platform and Symfony's Workflow component
 
-The goal is to automatically expose workflow information as part of the resource payload.
+The goal is:
+ - automatically expose workflow information as part of the resource payload.
+  - contains available transitions
+  - contains unavailable transitions with ConstraintViolation messages 
+ - automatically expose endpoints to execute transitions.
+   - workflows should try to do all mutations and persistence using listeners
 
 - Workflows that support API Platform resources can be toggled to include workflow data and operations
   - Workflow transition information is added to the resource representation as an array of [potentialAction](https://schema.org/docs/actions.html)
@@ -61,6 +66,10 @@ Features
 
 Documentation
 -------------
+
+- To enable API support for your workflows:
+ - toggle support for your worklow using workflow metadata
+ - add WorkflowActionsTrait to your model class
 
 Roadmap
 -------
