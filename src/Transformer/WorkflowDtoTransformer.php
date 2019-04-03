@@ -4,14 +4,14 @@ namespace Wesnick\Workflow\Transformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
-use Wesnick\Workflow\Model\EmptyWorkflowDTO;
+use Wesnick\Workflow\Model\WorkflowDTO;
 
 /**
- * Class EmptyDtoTransformer.
+ * Class WorkflowDtoTransformer.
  *
  * @author Wesley O. Nichols <spanishwes@gmail.com>
  */
-class EmptyDtoTransformer implements DataTransformerInterface
+class WorkflowDtoTransformer implements DataTransformerInterface
 {
     /**
      * {@inheritdoc}
@@ -30,6 +30,6 @@ class EmptyDtoTransformer implements DataTransformerInterface
             return false;
         }
 
-        return EmptyWorkflowDTO::class === ($context['input']['class'] ?? null);
+        return WorkflowDTO::class === ($context['input']['class'] ?? null);
     }
 }

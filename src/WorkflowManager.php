@@ -8,10 +8,7 @@ namespace Wesnick\Workflow;
 
 use ApiPlatform\Core\Bridge\Symfony\Routing\RouteNameGenerator;
 use Wesnick\Workflow\Configuration\WorkflowConfiguration;
-use Wesnick\Workflow\Listener\DefaultTransitionApplyListener;
 use Wesnick\Workflow\Model\Action;
-use Wesnick\Workflow\Model\ActionStatusType;
-use Wesnick\Workflow\Model\EmptyWorkflowDTO;
 use Wesnick\Workflow\Model\EntryPoint;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -114,8 +111,6 @@ class WorkflowManager
         $workflows = $this->registry->all($subject);
         $actions   = [];
 
-//        $operations = $this->getOperationsFor(get_class($subject));
-
         foreach ($workflows as $workflow) {
             if (!empty($workflowNames) && !in_array($workflow->getName(), $workflowNames, true)) {
                 continue;
@@ -148,7 +143,6 @@ class WorkflowManager
                 $entryPoint->setHttpMethod($route->getMethods()[0]);
 
                 $currentAction = new Action();
-                $currentAction->setActionStatus(ActionStatusType::POTENTIAL_ACTION_STATUS);
                 $currentAction->setTarget($entryPoint);
                 $currentAction->setName($transition->getName());
                 $currentAction->setDescription($transitionMeta['description'] ?? ucfirst($transition->getName()).' Action');
@@ -192,18 +186,7 @@ class WorkflowManager
                 // @TODO: allow overriding custom defaults with transition metadata
 //                $transitionMeta = $def->getMetadataStore()->getTransitionMetadata($transition);
 
-                // @TODO: check for collisions? better naming strategy?
-                $operations[$transition->getName()] = [
-                    'method'       => 'PUT',
-                    '_path_suffix' => '/'.str_replace('_', '-', $transition->getName()),
-                    'controller'   => DefaultTransitionApplyListener::class,
-                    'defaults'     => [
-                        'workflow'   => $workflowConfiguration->getName(),
-                        'transition' => $transition->getName(),
-                    ],
-                    'input'  => ['class' => EmptyWorkflowDTO::class, 'name' => 'Empty'],
-                    'output' => ['class' => $resourceClass, 'name' => $resourceShortName],
-                ];
+
             }
         }
 

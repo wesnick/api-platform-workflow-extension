@@ -3,7 +3,6 @@
 namespace Wesnick\Workflow\Model;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Wesnick\Workflow\Model\ActionStatusType;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,9 +21,14 @@ class Action
      * @ApiProperty(iri="http://schema.org/actionStatus")
      * @Groups({"workflowAction:output"})
      * @Assert\Type(type="string")
-     * @Assert\Choice(callback={ActionStatusType::class, "toArray"})
+     * @Assert\Choice(choices={
+     *     "PotentialActionStatus",
+     *     "ActiveActionStatus",
+     *     "FailedActionStatus",
+     *     "CompletedActionStatus"
+     * })
      */
-    private $actionStatus;
+    private $actionStatus = 'PotentialActionStatus';
 
     /**
      * @var EntryPoint|null indicates a target EntryPoint for an Action

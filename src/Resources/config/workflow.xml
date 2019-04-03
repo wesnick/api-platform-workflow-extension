@@ -40,7 +40,7 @@
             <tag name="serializer.normalizer" prority="64"/>
         </service>
 
-        <service class="Wesnick\Workflow\Transformer\EmptyDtoTransformer">
+        <service class="Wesnick\Workflow\Transformer\DtoTransformer">
             <tag name="api_platform.data_transformer"/>
         </service>
 

@@ -1,9 +1,5 @@
 <?php declare(strict_types=1);
 
-/*
- * Copyright (c) 2019, Wesley O. Nichols
- */
-
 namespace Wesnick\Workflow\PathResolver;
 
 use ApiPlatform\Core\PathResolver\OperationPathResolverInterface;

@@ -62,37 +62,4 @@ class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethod
 
         return $data;
     }
-
-    /**
-     * @param array $actions
-     *
-     * @return array
-     */
-    protected function getPotentialActions(array $actions): array
-    {
-        $actionData = [];
-
-        foreach ($actions as $action) {
-        }
-
-        return $actionData;
-//        foreach ($constraintViolationList as $violation) {
-//            $violationData = [
-//                'propertyPath' => $this->nameConverter ? $this->nameConverter->normalize($violation->getPropertyPath()) : $violation->getPropertyPath(),
-//                'message' => $violation->getMessage(),
-//            ];
-//
-//            $constraint = $violation->getConstraint();
-//            if ($this->serializePayloadFields && $constraint && $constraint->payload) {
-//                // If some fields are whitelisted, only them are added
-//                $payloadFields = null === $this->serializePayloadFields ? $constraint->payload : array_intersect_key($constraint->payload, array_flip($this->serializePayloadFields));
-//                $payloadFields && $violationData['payload'] = $payloadFields;
-//            }
-//
-//            $violations[] = $violationData;
-//            $messages[] = ($violationData['propertyPath'] ? "{$violationData['propertyPath']}: " : '').$violationData['message'];
-//        }
-//
-//        return [$messages, $violations];
-    }
 }

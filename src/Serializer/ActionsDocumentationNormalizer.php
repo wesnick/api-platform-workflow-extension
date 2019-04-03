@@ -37,45 +37,13 @@ class ActionsDocumentationNormalizer implements NormalizerInterface, CacheableSu
     {
         $data = $this->decorated->normalize($object, $format, $context);
 
-        // Adjust hydra:supportedOperation information
-        foreach ($object->getResourceNameCollection() as $index => $coll) {
-            // Filter out duplicates
-            $seen = [];
-            $data['hydra:supportedClass'][$index]['hydra:supportedOperation'] = array_filter(
-                $data['hydra:supportedClass'][$index]['hydra:supportedOperation'],
-                function ($op) use (&$seen) {
-                    if (!in_array($op['hydra:method'], $seen, true)) {
-                        $seen[] = $op['hydra:method'];
-
-                        return true;
-                    }
-
-                    return false;
-                }
-            );
-
-            // Add in our worklfow methods
-            foreach ($this->workflowManager->getOperationsFor($coll) as $route) {
-                $hydraOperation = [
-                    '@type'       => ['hydra:Operation', 'schema:ControlAction'],
-                    'hydra:title' => sprintf('Controls the %s resource.', $data['hydra:supportedClass'][$index]['hydra:title']),
-                    'hydra:method'=> 'PUT',
-                    'rdfs:label'  => $route['defaults']['transition'],
-                    'returns'     => $data['hydra:supportedClass'][$index]['@id'],
-                    'expects'     => '#EmptyWorkflow',
-                ];
-
-                $data['hydra:supportedClass'][$index]['hydra:supportedOperation'][] = $hydraOperation;
-            }
-        }
-
         // Add in our empty payload class
         $data['hydra:supportedClass'][] = [
-            '@id'               => '#EmtpyWorkflow',
+            '@id'               => '#WorkflowDTO',
             '@type'             => 'hydra:Class',
-            'hydra:title'       => 'Empty',
-            'hydra:label'       => 'Empty',
-            'hydra:description' => 'Represents and empty body payload',
+            'hydra:title'       => 'WorkflowDTO',
+            'hydra:label'       => 'WorkflowDTO',
+            'hydra:description' => 'Represents workflow name and transition.',
         ];
 
         return $data;

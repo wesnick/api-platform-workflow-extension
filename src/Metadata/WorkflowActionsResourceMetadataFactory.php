@@ -9,7 +9,7 @@ namespace Wesnick\Workflow\Metadata;
 use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
 use ApiPlatform\Core\Metadata\Resource\ResourceMetadata;
 use Wesnick\Workflow\Listener\DefaultTransitionApplyListener;
-use Wesnick\Workflow\Model\EmptyWorkflowDTO;
+use Wesnick\Workflow\Model\WorkflowDTO;
 use Wesnick\Workflow\WorkflowManager;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Registry;
@@ -45,6 +45,20 @@ class WorkflowActionsResourceMetadataFactory implements ResourceMetadataFactoryI
         $attributes['denormalization_context']['groups'][] = 'workflowAction:output';
 
         $operations = $resourceMetadata->getItemOperations();
+
+        $operations['patch'] = [
+            'method'       => 'PATCH',
+            # this could be enabled optionally to allow non-workflow related PATCH ops
+//            '_path_suffix' => '/'.str_replace('_', '-', $transition->getName()),
+            'controller'   => DefaultTransitionApplyListener::class,
+//            'defaults'     => [
+//                'workflow'   => $workflowConfiguration->getName(),
+//                'transition' => $transition->getName(),
+//            ],
+            'input'  => ['class' => WorkflowDTO::class, 'name' => 'WorkflowDTO'],
+        ];
+
+
         $newOperations = $this->workflowManager->getOperationsFor($resourceClass);
 
         return $resourceMetadata
