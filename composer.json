@@ -1,0 +1,35 @@
+{
+    "name": "wesnick/api-platform-workflow-extension",
+    "type": "symfony-bundle",
+    "description": "Opinionated integration of api platform with workflow component",
+    "keywords": [ "workflow", "api platform" ],
+    "homepage": "https://github.com/wesnick/api-platform-workflow-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wesley O. Nichols",
+            "email": "spanishwes@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "symfony/framework-bundle": "^3.4.4 || ^4.0",
+        "api-platform/core": "^2.4",
+        "symfony/workflow": "^3.4 || ^4.0",
+        "symfony/validator": "^3.4 || ^4.0",
+        "myclabs/php-enum": "^1.6"
+    },
+    "require-dev": {
+        "sensio/framework-extra-bundle": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wesnick\\Workflow\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wesnick\\Workflow\\Tests\\": "tests/"
+        }
+    }
+}
