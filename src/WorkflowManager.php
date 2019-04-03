@@ -94,7 +94,18 @@ class WorkflowManager
      */
     public function tryToApply($subject, string $workflowName, string $transitionName)
     {
-        return $this->registry->get($subject, $workflowName)->apply($subject, $transitionName);
+        $workflow = $this->registry->get($subject, $workflowName);
+
+        if ($workflow->can($subject, $transitionName)) {
+            return $workflow->apply($subject, $transitionName);
+        }
+
+        throw new NotEnabledTransitionException(
+            $subject,
+            $transitionName,
+            $workflow,
+            $workflow->buildTransitionBlockerList($subject, $transitionName)
+        );
     }
 
     /**
@@ -138,7 +149,7 @@ class WorkflowManager
                             'workflow' => $workflow->getName(),
                             'transition' => $transition->getName()
                         ],
-                        RouterInterface::ABSOLUTE_URL
+                        RouterInterface::ABSOLUTE_PATH
                     )
                 ;
                 $entryPoint = new EntryPoint();

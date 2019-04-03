@@ -23,14 +23,16 @@ class DefaultTransitionApplyListener
 
     public function __invoke($data, Request $request)
     {
+        // @TODO: this is a placeholder until decide how to send payload to patch endpoint.
         $input = json_decode($request->getContent(), true);
         if (!is_object($data)) {
-            throw new BadRequestHttpException(sprintf('Expected object for workflow %s, got %s.', $workflow, gettype($data)));
+            throw new BadRequestHttpException(sprintf('Expected object for workflow %s, got %s.', $input['workflow'], gettype($data)));
         }
+
         try {
             $this->workflowManager->tryToApply($data, $input['workflow'], $input['transition']);
         } catch (NotEnabledTransitionException $e) {
-            throw new BadRequestHttpException(sprintf('Transition %s in Workflow %s is not available.', $workflow, $transition));
+            throw new BadRequestHttpException(sprintf('Transition %s in Workflow %s is not available.', $input['workflow'], $input['transition']));
         }
 
         return $data;
