@@ -4,31 +4,30 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="Wesnick\Workflow\EventListener\DefaultTransitionApplyListener" public="true">
+        <service id="Wesnick\Workflow\Controller\DefaultTransitionController" public="true">
             <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
         </service>
         <service id="Wesnick\Workflow\EventListener\SubjectValidatorListener">
             <argument type="service" id="validator"/>
         </service>
         <service id="Wesnick\Workflow\Metadata\WorkflowActionsResourceMetadataFactory" decorates="api_platform.metadata.resource.metadata_factory">
-            <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
+            <argument>%wesnick.workflow_extension.supported_resources%</argument>
             <argument type="service" id="Wesnick\Workflow\Metadata\WorkflowActionsResourceMetadataFactory.inner"/>
         </service>
         <service id="Wesnick\Workflow\Serializer\WorkflowActionContextBuilder" decorates="api_platform.serializer.context_builder">
-            <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
+            <argument>%wesnick.workflow_extension.supported_resources%</argument>
             <argument type="service" id="Wesnick\Workflow\Serializer\WorkflowActionContextBuilder.inner"/>
         </service>
-        <service id="Wesnick\Workflow\PathResolver\WorkflowActionPathResolver" decorates="api_platform.operation_path_resolver.generator">
-            <argument type="service" id="Wesnick\Workflow\PathResolver\WorkflowActionPathResolver.inner"/>
-        </service>
-
         <service id="Wesnick\Workflow\Serializer\WorkflowActionNormalizer">
             <argument type="service" id="serializer.normalizer.object"/>
             <tag name="serializer.normalizer" prority="65"/>
         </service>
 
+        <service id="Wesnick\Workflow\EventListener\WorkflowOperationListener">
+            <tag name="kernel.event_listener" event="kernel.request" priority="3" method="onKernelRequest"/>
+        </service>
+
         <service id="Wesnick\Workflow\Serializer\ActionsDocumentationNormalizer">
-            <argument type="service" id="Wesnick\Workflow\WorkflowManager"/>
             <argument type="service" id="api_platform.hydra.normalizer.documentation"/>
         </service>
 

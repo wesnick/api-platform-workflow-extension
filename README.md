@@ -1,6 +1,8 @@
 WesnickWorkflowBundle
 ==================
 
+### This bundle is a work-in-progress.
+
 Introduction
 ------------
 

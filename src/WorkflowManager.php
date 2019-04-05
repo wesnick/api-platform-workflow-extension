@@ -149,7 +149,7 @@ class WorkflowManager
                             'workflow' => $workflow->getName(),
                             'transition' => $transition->getName()
                         ],
-                        RouterInterface::ABSOLUTE_PATH
+                        RouterInterface::ABSOLUTE_URL
                     )
                 ;
                 $entryPoint = new EntryPoint();

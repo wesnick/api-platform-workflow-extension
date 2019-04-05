@@ -14,11 +14,11 @@ use Symfony\Component\HttpFoundation\Request;
 class WorkflowActionContextBuilder implements SerializerContextBuilderInterface
 {
     private $decorated;
-    private $workflowManager;
+    private $supportedResources;
 
-    public function __construct(WorkflowManager $workflowManager, SerializerContextBuilderInterface $decorated)
+    public function __construct(array $supportedResources, SerializerContextBuilderInterface $decorated)
     {
-        $this->workflowManager = $workflowManager;
+        $this->supportedResources = $supportedResources;
         $this->decorated = $decorated;
     }
 
@@ -28,7 +28,7 @@ class WorkflowActionContextBuilder implements SerializerContextBuilderInterface
         $resourceClass = $context['resource_class'] ?? null;
 
         if (
-            $this->workflowManager->supportsResource($resourceClass)
+            array_key_exists($resourceClass, $this->supportedResources)
             && isset($context['groups'])
             && false === $normalization
         ) {

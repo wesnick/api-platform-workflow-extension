@@ -18,7 +18,7 @@ class WorkflowDtoTransformer implements DataTransformerInterface
      */
     public function transform($data, string $to, array $context = [])
     {
-        return $context[AbstractItemNormalizer::OBJECT_TO_POPULATE];
+        return $data;
     }
 
     /**

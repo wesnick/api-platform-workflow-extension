@@ -3,7 +3,6 @@
 namespace Wesnick\Workflow\Serializer;
 
 use ApiPlatform\Core\Hydra\Serializer\DocumentationNormalizer;
-use Wesnick\Workflow\WorkflowManager;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -17,14 +16,9 @@ class ActionsDocumentationNormalizer implements NormalizerInterface, CacheableSu
     public const FORMAT = 'jsonld';
 
     private $decorated;
-    /**
-     * @var array
-     */
-    private $workflowManager;
 
-    public function __construct(WorkflowManager $workflowManager, DocumentationNormalizer $decorated)
+    public function __construct(DocumentationNormalizer $decorated)
     {
-        $this->workflowManager = $workflowManager;
         $this->decorated       = $decorated;
     }
 
@@ -35,6 +29,7 @@ class ActionsDocumentationNormalizer implements NormalizerInterface, CacheableSu
 
     public function normalize($object, $format = null, array $context = [])
     {
+        // @TODO: review that this is even gets hydra to do anything extra
         $data = $this->decorated->normalize($object, $format, $context);
 
         // Add in our empty payload class

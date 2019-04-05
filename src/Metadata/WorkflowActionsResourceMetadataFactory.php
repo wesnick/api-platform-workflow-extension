@@ -8,11 +8,8 @@ namespace Wesnick\Workflow\Metadata;
 
 use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
 use ApiPlatform\Core\Metadata\Resource\ResourceMetadata;
-use Wesnick\Workflow\EventListener\DefaultTransitionApplyListener;
+use Wesnick\Workflow\Controller\DefaultTransitionController;
 use Wesnick\Workflow\Model\WorkflowDTO;
-use Wesnick\Workflow\WorkflowManager;
-use Symfony\Component\Workflow\Definition;
-use Symfony\Component\Workflow\Registry;
 
 /**
  * Ensure psuedo-property potentialActions appears on supported resources and add transition operations to the resource.
@@ -21,12 +18,12 @@ use Symfony\Component\Workflow\Registry;
  */
 class WorkflowActionsResourceMetadataFactory implements ResourceMetadataFactoryInterface
 {
-    private $workflowManager;
+    private $supportedResources;
     private $decorated;
 
-    public function __construct(WorkflowManager $workflowManager, ResourceMetadataFactoryInterface $decorated)
+    public function __construct(array $supportedResources, ResourceMetadataFactoryInterface $decorated)
     {
-        $this->workflowManager = $workflowManager;
+        $this->supportedResources = $supportedResources;
         $this->decorated = $decorated;
     }
 
@@ -36,7 +33,7 @@ class WorkflowActionsResourceMetadataFactory implements ResourceMetadataFactoryI
     public function create(string $resourceClass): ResourceMetadata
     {
         $resourceMetadata = $this->decorated->create($resourceClass);
-        if (!$this->workflowManager->supportsResource($resourceClass)) {
+        if (!array_key_exists($resourceClass, $this->supportedResources)) {
             return $resourceMetadata;
         }
 
@@ -48,13 +45,7 @@ class WorkflowActionsResourceMetadataFactory implements ResourceMetadataFactoryI
 
         $operations['patch'] = [
             'method'       => 'PATCH',
-            # this could be enabled optionally to allow non-workflow related PATCH ops
-//            '_path_suffix' => '/'.str_replace('_', '-', $transition->getName()),
-            'controller'   => DefaultTransitionApplyListener::class,
-//            'defaults'     => [
-//                'workflow'   => $workflowConfiguration->getName(),
-//                'transition' => $transition->getName(),
-//            ],
+            'controller'   => DefaultTransitionController::class,
             'input'  => ['class' => WorkflowDTO::class, 'name' => 'WorkflowDTO'],
         ];
 
