@@ -3,6 +3,7 @@
 namespace Wesnick\Workflow\Serializer;
 
 use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
+use Wesnick\Workflow\Model\PotentialActionInterface;
 use Wesnick\Workflow\WorkflowManager;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -14,11 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 class WorkflowActionContextBuilder implements SerializerContextBuilderInterface
 {
     private $decorated;
-    private $supportedResources;
 
-    public function __construct(array $supportedResources, SerializerContextBuilderInterface $decorated)
+    public function __construct(SerializerContextBuilderInterface $decorated)
     {
-        $this->supportedResources = $supportedResources;
         $this->decorated = $decorated;
     }
 
@@ -27,8 +26,7 @@ class WorkflowActionContextBuilder implements SerializerContextBuilderInterface
         $context = $this->decorated->createFromRequest($request, $normalization, $extractedAttributes);
         $resourceClass = $context['resource_class'] ?? null;
 
-        if (
-            array_key_exists($resourceClass, $this->supportedResources)
+        if (is_a($resourceClass, PotentialActionInterface::class, true)
             && isset($context['groups'])
             && false === $normalization
         ) {

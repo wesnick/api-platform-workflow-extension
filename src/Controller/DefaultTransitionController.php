@@ -2,7 +2,6 @@
 
 namespace Wesnick\Workflow\Controller;
 
-use Wesnick\Workflow\Model\WorkflowDTO;
 use Wesnick\Workflow\WorkflowManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
@@ -21,7 +20,7 @@ class DefaultTransitionController
         $this->workflowManager = $workflowExecutor;
     }
 
-    public function __invoke(WorkflowDTO $data, $subject, string $workflow, string $transition)
+    public function __invoke($data, $subject, string $workflow, string $transition)
     {
         if (!is_object($subject)) {
             throw new BadRequestHttpException(sprintf('Expected object for workflow %s, got %s.', $workflow, gettype($subject)));

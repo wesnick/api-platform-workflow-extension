@@ -9,6 +9,7 @@ namespace Wesnick\Workflow\Metadata;
 use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
 use ApiPlatform\Core\Metadata\Resource\ResourceMetadata;
 use Wesnick\Workflow\Controller\DefaultTransitionController;
+use Wesnick\Workflow\Model\PotentialActionInterface;
 use Wesnick\Workflow\Model\WorkflowDTO;
 
 /**
@@ -18,12 +19,10 @@ use Wesnick\Workflow\Model\WorkflowDTO;
  */
 class WorkflowActionsResourceMetadataFactory implements ResourceMetadataFactoryInterface
 {
-    private $supportedResources;
     private $decorated;
 
-    public function __construct(array $supportedResources, ResourceMetadataFactoryInterface $decorated)
+    public function __construct(ResourceMetadataFactoryInterface $decorated)
     {
-        $this->supportedResources = $supportedResources;
         $this->decorated = $decorated;
     }
 
@@ -33,7 +32,7 @@ class WorkflowActionsResourceMetadataFactory implements ResourceMetadataFactoryI
     public function create(string $resourceClass): ResourceMetadata
     {
         $resourceMetadata = $this->decorated->create($resourceClass);
-        if (!array_key_exists($resourceClass, $this->supportedResources)) {
+        if (!is_a($resourceClass, PotentialActionInterface::class, true)) {
             return $resourceMetadata;
         }
 

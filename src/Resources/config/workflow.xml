@@ -11,11 +11,9 @@
             <argument type="service" id="validator"/>
         </service>
         <service id="Wesnick\Workflow\Metadata\WorkflowActionsResourceMetadataFactory" decorates="api_platform.metadata.resource.metadata_factory">
-            <argument>%wesnick.workflow_extension.supported_resources%</argument>
             <argument type="service" id="Wesnick\Workflow\Metadata\WorkflowActionsResourceMetadataFactory.inner"/>
         </service>
         <service id="Wesnick\Workflow\Serializer\WorkflowActionContextBuilder" decorates="api_platform.serializer.context_builder">
-            <argument>%wesnick.workflow_extension.supported_resources%</argument>
             <argument type="service" id="Wesnick\Workflow\Serializer\WorkflowActionContextBuilder.inner"/>
         </service>
         <service id="Wesnick\Workflow\Serializer\WorkflowActionNormalizer">
@@ -44,9 +42,8 @@
 
         <service id="Wesnick\Workflow\WorkflowManager">
             <argument type="service" id="workflow.registry"/>
-            <argument type="service" id="router"/>
+            <argument type="service" id="api_platform.iri_converter"/>
             <argument type="collection"/>  <!-- compiler pass -->
-            <argument type="service" id="property_accessor"/>
         </service>
 
     </services>

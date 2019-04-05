@@ -2,6 +2,7 @@
 
 namespace Wesnick\Workflow\Serializer;
 
+use Wesnick\Workflow\Model\PotentialActionInterface;
 use Wesnick\Workflow\WorkflowManager;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -47,7 +48,7 @@ class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethod
     {
         $data = $this->decorated->normalize($object, $format, $context);
 
-        if (!$this->workflowManager->supportsResource(get_class($object))) {
+        if (!$object instanceof PotentialActionInterface) {
             return $data;
         }
 

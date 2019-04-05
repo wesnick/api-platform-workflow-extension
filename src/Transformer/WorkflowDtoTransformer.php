@@ -3,7 +3,6 @@
 namespace Wesnick\Workflow\Transformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
-use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use Wesnick\Workflow\Model\WorkflowDTO;
 
 /**

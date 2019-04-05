@@ -5,6 +5,9 @@ namespace Wesnick\Workflow\Model;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * An action performed by a direct agent and indirect participants upon a direct object. Optionally happens at a location with the help of an inanimate instrument. The execution of the action may produce a result. Specific action sub-type documentation specifies the exact expectation of each argument/role.\\n\\nSee also \[blog post\](http://blog.schema.org/2014/04/announcing-schemaorg-actions.html) and \[Actions overview document\](http://schema.org/docs/actions.html).
@@ -55,6 +58,15 @@ class Action
      * @Assert\Type(type="string")
      */
     private $description;
+
+    /**
+     * @var ConstraintViolationListInterface|null
+     *
+     * @ApiProperty(iri="http://schema.org/error")
+     * @Groups({"workflowAction:output"})
+     * @var ConstraintViolationList
+     */
+    private $error;
 
     public function setActionStatus(?string $actionStatus): void
     {
@@ -112,5 +124,25 @@ class Action
     public function setDescription(?string $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return ConstraintViolationList|null
+     */
+    public function getError(): ?ConstraintViolationList
+    {
+        return $this->error;
+    }
+
+    /**
+     * @param ConstraintViolationInterface $error
+     */
+    public function addError(ConstraintViolationInterface $error): void
+    {
+        if (null === $this->error) {
+            $this->error = new ConstraintViolationList();
+        }
+
+        $this->error->add($error);
     }
 }

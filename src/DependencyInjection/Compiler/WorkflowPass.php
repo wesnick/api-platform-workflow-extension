@@ -4,7 +4,6 @@ namespace Wesnick\Workflow\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
-use Wesnick\Workflow\Configuration\WorkflowConfiguration;
 use Wesnick\Workflow\EventListener\SubjectValidatorListener;
 use Wesnick\Workflow\WorkflowManager;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -25,11 +24,14 @@ class WorkflowPass implements CompilerPassInterface
         if (!$container->hasDefinition('workflow.registry')) {
             return;
         }
+        // @TODO: not sure if required to add Models to resource class directories.
+//        $directories = $container->getParameter('api_platform.resource_class_directories');
+//        $directories[] = realpath(__DIR__.'/../../Model');
+//        $container->setParameter('api_platform.resource_class_directories', $directories);
 
         // @TODO: add validator
 //        $validator        = $container->getDefinition(SubjectValidatorListener::class);
 
-        $managerArgs = [];
         $classMap = [];
 
         // Iterate over workflows and create services
@@ -43,22 +45,7 @@ class WorkflowPass implements CompilerPassInterface
 
             $className = $supportStrategy->getArgument(0);
             $workflowShortName = $workflow->getArgument(3);
-            $currentWorkflowDefinition = $container->getDefinition($workflow->getArgument(0));
-            $metadataStoreDef = $currentWorkflowDefinition->getArgument(3);
-
             $classMap[$className][] = $workflowShortName;
-
-            $currentDef = $container
-                ->register('workflow.api.configuration.'.$workflowShortName, WorkflowConfiguration::class)
-                ->setArguments([
-                    $workflowShortName,
-                    $className,
-                    $currentWorkflowDefinition,
-                    $metadataStoreDef,
-                ])
-            ;
-
-            $managerArgs[] = $currentDef;
 
             // @TODO: add validator
 //                $validator->addTag(
@@ -66,8 +53,7 @@ class WorkflowPass implements CompilerPassInterface
 //                );
         }
 
-        $container->setParameter('wesnick.workflow_extension.supported_resources', $classMap);
-        $container->getDefinition(WorkflowManager::class)->setArgument('$workflowConfiguration', $managerArgs);
+        $container->getDefinition(WorkflowManager::class)->setArgument('$workflowConfiguration', $classMap);
     }
 
     private function workflowGenerator(ContainerBuilder $container): \Generator

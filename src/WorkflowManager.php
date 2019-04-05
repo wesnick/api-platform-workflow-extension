@@ -6,14 +6,11 @@
 
 namespace Wesnick\Workflow;
 
-use ApiPlatform\Core\Api\OperationType;
-use ApiPlatform\Core\Bridge\Symfony\Routing\RouteNameGenerator;
-use Wesnick\Workflow\Configuration\WorkflowConfiguration;
+use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Api\UrlGeneratorInterface;
+use Symfony\Component\Validator\ConstraintViolation;
 use Wesnick\Workflow\Model\Action;
 use Wesnick\Workflow\Model\EntryPoint;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\Transition;
@@ -36,68 +33,47 @@ class WorkflowManager
     private $registry;
 
     /**
-     * @var RouterInterface
+     * @var IriConverterInterface
      */
     private $router;
 
     /**
-     * @var WorkflowConfiguration[]
+     * Classmap
+     *
+     * [ className => [workflowName]]
+     *
+     * @var array
      */
     private $workflowConfiguration;
-
-    /**
-     * @var PropertyAccessorInterface
-     */
-    private $propertyAccess;
 
     /**
      * WorkflowManager constructor.
      *
      * @param Registry                  $registry
-     * @param RouterInterface           $router
+     * @param IriConverterInterface     $router
      * @param array                     $workflowConfiguration
-     * @param PropertyAccessorInterface $propertyAccess
      */
-    public function __construct(Registry $registry, RouterInterface $router, array $workflowConfiguration, PropertyAccessorInterface $propertyAccess)
+    public function __construct(Registry $registry, IriConverterInterface $router, array $workflowConfiguration)
     {
         $this->registry              = $registry;
         $this->workflowConfiguration = $workflowConfiguration;
         $this->router                = $router;
-        $this->propertyAccess        = $propertyAccess;
-    }
-
-    /**
-     * @param string $resourceClass
-     * @param string $workflowName
-     *
-     * @return WorkflowConfiguration
-     */
-    public function getWorkflowConfigurationFor(string $resourceClass, string $workflowName): WorkflowConfiguration
-    {
-        foreach ($this->workflowConfiguration as $config) {
-            if ($resourceClass === $config->getClassName() && $workflowName === $config->getName()) {
-                return $config;
-            }
-        }
-
-        throw new LogicException(sprintf('Workflow %s not found for resource class %s', $workflowName, $resourceClass));
     }
 
     /**
      * @param $subject
      * @param string $workflowName
      * @param string $transitionName
-     *
-     * @throws NotEnabledTransitionException
+     * @param array $context
      *
      * @return \Symfony\Component\Workflow\Marking
      */
-    public function tryToApply($subject, string $workflowName, string $transitionName)
+    public function tryToApply($subject, string $workflowName, string $transitionName, array $context = [])
     {
         $workflow = $this->registry->get($subject, $workflowName);
 
         if ($workflow->can($subject, $transitionName)) {
-            return $workflow->apply($subject, $transitionName);
+            return $workflow->apply($subject, $transitionName /*, $context */);
         }
 
         throw new NotEnabledTransitionException(
@@ -118,8 +94,6 @@ class WorkflowManager
      */
     public function getAllActions($subject, array $workflowNames = [])
     {
-        $resourceClass = get_class($subject);
-        $resourceShortName = substr($resourceClass, strrpos($resourceClass, '\\') + 1);
         $workflows = $this->registry->all($subject);
         $actions   = [];
 
@@ -136,25 +110,15 @@ class WorkflowManager
 
                 $blockers = $workflow->buildTransitionBlockerList($subject, $transition->getName());
 
-                $routeName =  RouteNameGenerator::generate('patch', $resourceShortName, OperationType::ITEM);
+                $url = $this->router->getIriFromItem($subject, UrlGeneratorInterface::ABS_URL);
+                $url .= '?'.http_build_query([
+                    'workflow' => $workflow->getName(),
+                    'transition' => $transition->getName()
+                ]);
 
-                $route = $this->router->getRouteCollection()->get($routeName);
-
-                $url = $this
-                    ->router
-                    ->generate(
-                        $routeName,
-                        [
-                            'id' => $this->propertyAccess->getValue($subject, 'id'),
-                            'workflow' => $workflow->getName(),
-                            'transition' => $transition->getName()
-                        ],
-                        RouterInterface::ABSOLUTE_URL
-                    )
-                ;
                 $entryPoint = new EntryPoint();
                 $entryPoint->setUrl($url);
-                $entryPoint->setHttpMethod($route->getMethods()[0]);
+                $entryPoint->setHttpMethod('PATCH');
 
                 $currentAction = new Action();
                 $currentAction->setTarget($entryPoint);
@@ -163,7 +127,17 @@ class WorkflowManager
 
                 if (!$blockers->isEmpty()) {
                     foreach ($blockers as $blocker) {
-                        // @TODO: add as violation constraint interface
+
+                        $violation = new ConstraintViolation(
+                            $blocker->getMessage(),
+                            $blocker->getMessage(),
+                            $blocker->getParameters(),
+                            $subject,
+                            '/',
+                            ''
+                        );
+
+                        $currentAction->addError($violation);
                     }
                 }
                 $actions[] = $currentAction;
@@ -171,55 +145,5 @@ class WorkflowManager
         }
 
         return $actions;
-    }
-
-    public function supportsResource(?string $resourceClass): bool
-    {
-        foreach ($this->workflowConfiguration as $config) {
-            if ($config->getClassName() === $resourceClass) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function getOperationsFor(string $resourceClass): array
-    {
-        $resourceShortName = substr($resourceClass, strrpos($resourceClass, '\\') + 1);
-        // @TODO: how to get access to resource metadata
-
-        $operations = [];
-
-        foreach ($this->getWorkflowConfigurationForClass($resourceClass) as $workflowConfiguration) {
-            $def      = $workflowConfiguration->getDefinition();
-            // @TODO: allow overriding custom defaults with workflow metadata
-//            $metadata = $def->getMetadataStore()->getWorkflowMetadata();
-            foreach ($def->getTransitions() as $transition) {
-                // @TODO: allow overriding custom defaults with transition metadata
-//                $transitionMeta = $def->getMetadataStore()->getTransitionMetadata($transition);
-
-
-            }
-        }
-
-        return $operations;
-    }
-
-    /**
-     * @param string $resourceClass
-     *
-     * @return WorkflowConfiguration[]
-     */
-    private function getWorkflowConfigurationForClass(string $resourceClass): array
-    {
-        $configs = [];
-        foreach ($this->workflowConfiguration as $config) {
-            if ($config->getClassName() === $resourceClass) {
-                $configs[] = $config;
-            }
-        }
-
-        return $configs;
     }
 }
