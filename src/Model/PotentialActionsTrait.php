@@ -6,11 +6,11 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Trait WorkflowActionsTrait.
+ * Trait PotentialActionsTrait.
  *
  * @author Wesley O. Nichols <spanishwes@gmail.com>
  */
-trait WorkflowActionsTrait
+trait PotentialActionsTrait
 {
     /**
      * @var Action[] collection of potential Action, which describes an idealized action in which this thing

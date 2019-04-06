@@ -172,8 +172,11 @@ Documentation
 -------------
 
 - To enable API support for your workflows:
- - toggle support for your worklow using workflow metadata
- - add WorkflowActionsTrait to your model class
+
+  - Subject class must implement PotentialActionInterface
+  - You can implement this interface either with PotentialActionsTrait or on your own, be sure to set serialization groups appropriately. The bundle automatically pushes the group ```workflowAction:output``` during denormalization. 
+ - add descriptive messages for your workflow/transitions using workflow metadata
+
 
 Roadmap
 -------

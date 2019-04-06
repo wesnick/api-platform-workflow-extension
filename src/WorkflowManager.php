@@ -85,7 +85,7 @@ class WorkflowManager
     }
 
     /**
-     * Returns an array of transitions, both enabled and not enabled, keyed by transition name.
+     * Returns an array of enabled transitions, both available and blocked.
      *
      * @param object $subject
      * @param array  $workflowNames
@@ -102,19 +102,20 @@ class WorkflowManager
                 continue;
             }
 
-            // This method only returns transitions that can currently be applied
-            // Add enabled transitions to array
             /** @var Transition $transition */
             foreach ($workflow->getEnabledTransitions($subject) as $transition) {
                 $transitionMeta = $workflow->getMetadataStore()->getTransitionMetadata($transition);
 
                 $blockers = $workflow->buildTransitionBlockerList($subject, $transition->getName());
 
-                $url = $this->router->getIriFromItem($subject, UrlGeneratorInterface::ABS_URL);
-                $url .= '?'.http_build_query([
+                $url = sprintf(
+                    '%s?%s',
+                    $this->router->getIriFromItem($subject, UrlGeneratorInterface::ABS_URL),
+                    http_build_query([
                     'workflow' => $workflow->getName(),
                     'transition' => $transition->getName()
-                ]);
+                    ])
+                );
 
                 $entryPoint = new EntryPoint();
                 $entryPoint->setUrl($url);
@@ -127,15 +128,21 @@ class WorkflowManager
 
                 if (!$blockers->isEmpty()) {
                     foreach ($blockers as $blocker) {
+                        $parameters = $blocker->getParameters();
 
-                        $violation = new ConstraintViolation(
-                            $blocker->getMessage(),
-                            $blocker->getMessage(),
-                            $blocker->getParameters(),
-                            $subject,
-                            '/',
-                            ''
-                        );
+                        if (array_key_exists('original_violation', $parameters)) {
+                            $violation = $parameters['original_violation'];
+                        } else {
+                            // @TODO: add a factory or event for building Violations from TransitionBlockers
+                            $violation = new ConstraintViolation(
+                                $blocker->getMessage(),
+                                $blocker->getMessage(),
+                                $blocker->getParameters(),
+                                $subject,
+                                '/',
+                                ''
+                            );
+                        }
 
                         $currentAction->addError($violation);
                     }

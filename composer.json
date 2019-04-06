@@ -13,13 +13,12 @@
     ],
     "require": {
         "php": "^7.1",
-        "symfony/framework-bundle": "^3.4.4 || ^4.0",
         "api-platform/core": "^2.4",
         "symfony/workflow": "^3.4 || ^4.0",
         "symfony/validator": "^3.4 || ^4.0"
     },
     "require-dev": {
-        "sensio/framework-extra-bundle": "^3.0"
+        "phpunit/phpunit": "^8.1"
     },
     "autoload": {
         "psr-4": {

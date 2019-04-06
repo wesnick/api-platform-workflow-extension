@@ -21,8 +21,7 @@ class WorkflowOperationListener
         $request = $event->getRequest();
         if (!$request->isMethod(Request::METHOD_PATCH)
             || !($attributes = RequestAttributesExtractor::extractAttributes($request))
-            || !isset($attributes['item_operation_name'])
-            || 'patch' !== $attributes['item_operation_name']
+            || 'patch' !== $attributes['item_operation_name'] ?? null
         ) {
             return;
         }
