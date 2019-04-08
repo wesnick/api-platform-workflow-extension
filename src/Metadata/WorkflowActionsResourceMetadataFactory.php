@@ -1,16 +1,21 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
- * Copyright (c) 2019, Wesley O. Nichols
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace Wesnick\Workflow\Metadata;
+namespace Wesnick\WorkflowBundle\Metadata;
 
 use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
 use ApiPlatform\Core\Metadata\Resource\ResourceMetadata;
-use Wesnick\Workflow\Controller\DefaultTransitionController;
-use Wesnick\Workflow\Model\PotentialActionInterface;
-use Wesnick\Workflow\Model\WorkflowDTO;
+use Wesnick\WorkflowBundle\Controller\DefaultTransitionController;
+use Wesnick\WorkflowBundle\Model\PotentialActionInterface;
+use Wesnick\WorkflowBundle\Model\WorkflowDTO;
 
 /**
  * Ensure psuedo-property potentialActions appears on supported resources and add transition operations to the resource.
@@ -45,9 +50,9 @@ class WorkflowActionsResourceMetadataFactory implements ResourceMetadataFactoryI
 
         $operations = $resourceMetadata->getItemOperations();
         $operations['patch'] = [
-            'method'       => 'PATCH',
-            'controller'   => DefaultTransitionController::class,
-            'input'  => ['class' => WorkflowDTO::class, 'name' => 'WorkflowDTO'],
+            'method' => 'PATCH',
+            'controller' => DefaultTransitionController::class,
+            'input' => ['class' => WorkflowDTO::class, 'name' => 'WorkflowDTO'],
         ];
 
         return $resourceMetadata

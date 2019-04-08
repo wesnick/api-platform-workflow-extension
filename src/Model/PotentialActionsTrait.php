@@ -1,6 +1,15 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Wesnick\Workflow\Model;
+declare(strict_types=1);
+
+/*
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Wesnick\WorkflowBundle\Model;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -14,7 +23,7 @@ trait PotentialActionsTrait
 {
     /**
      * @var Action[] collection of potential Action, which describes an idealized action in which this thing
-     * would play an 'object' role
+     *               would play an 'object' role
      *
      * @ApiProperty(
      *     iri="http://schema.org/potentialAction",

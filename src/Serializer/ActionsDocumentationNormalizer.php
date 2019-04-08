@@ -1,6 +1,15 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Wesnick\Workflow\Serializer;
+declare(strict_types=1);
+
+/*
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Wesnick\WorkflowBundle\Serializer;
 
 use ApiPlatform\Core\Hydra\Serializer\DocumentationNormalizer;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
@@ -19,7 +28,7 @@ class ActionsDocumentationNormalizer implements NormalizerInterface, CacheableSu
 
     public function __construct(DocumentationNormalizer $decorated)
     {
-        $this->decorated       = $decorated;
+        $this->decorated = $decorated;
     }
 
     public function hasCacheableSupportsMethod(): bool
@@ -34,10 +43,10 @@ class ActionsDocumentationNormalizer implements NormalizerInterface, CacheableSu
 
         // Add in our empty payload class
         $data['hydra:supportedClass'][] = [
-            '@id'               => '#WorkflowDTO',
-            '@type'             => 'hydra:Class',
-            'hydra:title'       => 'WorkflowDTO',
-            'hydra:label'       => 'WorkflowDTO',
+            '@id' => '#WorkflowDTO',
+            '@type' => 'hydra:Class',
+            'hydra:title' => 'WorkflowDTO',
+            'hydra:label' => 'WorkflowDTO',
             'hydra:description' => 'Represents workflow name and transition.',
         ];
 

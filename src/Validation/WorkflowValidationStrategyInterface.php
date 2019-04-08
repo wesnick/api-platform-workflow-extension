@@ -1,10 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
- * Copyright (c) 2019, Wesley O. Nichols
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace Wesnick\Workflow\Validation;
+namespace Wesnick\WorkflowBundle\Validation;
 
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;

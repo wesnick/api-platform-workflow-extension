@@ -1,13 +1,23 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Wesnick\Workflow\DependencyInjection\Compiler;
+declare(strict_types=1);
 
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
-use Wesnick\Workflow\EventListener\SubjectValidatorListener;
-use Wesnick\Workflow\WorkflowManager;
+/*
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Wesnick\WorkflowBundle\DependencyInjection\Compiler;
+
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
+use Wesnick\WorkflowBundle\EventListener\SubjectValidatorListener;
+use Wesnick\WorkflowBundle\EventListener\WorkflowOperationListener;
+use Wesnick\WorkflowBundle\Serializer\WorkflowNormalizer;
 
 /**
  * Class WorkflowPass.
@@ -35,8 +45,6 @@ class WorkflowPass implements CompilerPassInterface
         $classMap = [];
 
         // Iterate over workflows and create services
-        /** @var Definition $workflow */
-        /** @var Definition $supportStrategy */
         foreach ($this->workflowGenerator($container) as [$workflow, $supportStrategy]) {
             // only support InstanceOfSupportStrategy for now
             if (InstanceOfSupportStrategy::class !== $supportStrategy->getClass()) {
@@ -53,7 +61,8 @@ class WorkflowPass implements CompilerPassInterface
 //                );
         }
 
-        $container->getDefinition(WorkflowManager::class)->setArgument('$workflowConfiguration', $classMap);
+        $container->getDefinition(WorkflowNormalizer::class)->setArgument('$enabledWorkflowMap', $classMap);
+        $container->getDefinition(WorkflowOperationListener::class)->setArgument('$enabledWorkflowMap', $classMap);
     }
 
     private function workflowGenerator(ContainerBuilder $container): \Generator

@@ -1,10 +1,20 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Wesnick\Workflow\Controller;
+declare(strict_types=1);
 
-use Wesnick\Workflow\WorkflowManager;
+/*
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Wesnick\WorkflowBundle\Controller;
+
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
+use Symfony\Component\Workflow\Exception\InvalidArgumentException;
+use Symfony\Component\Workflow\Registry;
+use Wesnick\WorkflowBundle\Model\WorkflowDTO;
 
 /**
  * Class DefaultTransitionController.
@@ -13,25 +23,44 @@ use Symfony\Component\Workflow\Exception\NotEnabledTransitionException;
  */
 class DefaultTransitionController
 {
-    private $workflowManager;
+    private $registry;
 
-    public function __construct(WorkflowManager $workflowExecutor)
+    public function __construct(Registry $registry)
     {
-        $this->workflowManager = $workflowExecutor;
+        $this->registry = $registry;
     }
 
-    public function __invoke($data, $subject, string $workflow, string $transition)
+    /**
+     * @param WorkflowDTO $data
+     * @param mixed $subject
+     * @param string $workflowName
+     * @param string $transitionName
+     *
+     * @return mixed
+     */
+    public function __invoke($data, $subject, string $workflowName, string $transitionName)
     {
         if (!is_object($subject)) {
-            throw new BadRequestHttpException(sprintf('Expected object for workflow %s, got %s.', $workflow, gettype($subject)));
+            throw new BadRequestHttpException(
+                sprintf('Expected object for workflow "%s", got %s.', $workflowName, gettype($subject))
+            );
         }
 
         try {
-            $this->workflowManager->tryToApply($subject, $workflow, $transition);
-        } catch (NotEnabledTransitionException $e) {
-            throw new BadRequestHttpException(sprintf('Transition %s in Workflow %s is not available.', $workflow, $transition));
+            $workflow = $this->registry->get($subject, $workflowName);
+
+            if ($workflow->can($subject, $transitionName)) {
+                $workflow->apply($subject, $transitionName /*, ['dto' => $data] */);
+
+                return $subject;
+            }
+
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
         }
 
-        return $subject;
+        throw new BadRequestHttpException(
+            sprintf('Transition "%s" in Workflow "%s" is not available.', $transitionName, $workflowName)
+        );
     }
 }

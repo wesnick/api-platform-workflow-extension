@@ -1,9 +1,18 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Wesnick\Workflow\Transformer;
+declare(strict_types=1);
+
+/*
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Wesnick\WorkflowBundle\Transformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
-use Wesnick\Workflow\Model\WorkflowDTO;
+use Wesnick\WorkflowBundle\Model\WorkflowDTO;
 
 /**
  * Class WorkflowDtoTransformer.

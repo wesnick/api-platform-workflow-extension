@@ -1,11 +1,20 @@
 <?php
 
-namespace Wesnick\Workflow\EventListener;
+declare(strict_types=1);
 
-use Wesnick\Workflow\Validation\WorkflowValidationStrategyInterface;
+/*
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Wesnick\WorkflowBundle\EventListener;
+
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\Event\GuardEvent;
 use Symfony\Component\Workflow\TransitionBlocker;
+use Wesnick\WorkflowBundle\Validation\WorkflowValidationStrategyInterface;
 
 /**
  * Class SubjectValidatorListener.
@@ -20,7 +29,7 @@ class SubjectValidatorListener
     /**
      * SubjectValidatorListener constructor.
      *
-     * @param ValidatorInterface $validator
+     * @param ValidatorInterface                  $validator
      * @param WorkflowValidationStrategyInterface $validationStrategy
      */
     public function __construct(ValidatorInterface $validator, ?WorkflowValidationStrategyInterface $validationStrategy)
