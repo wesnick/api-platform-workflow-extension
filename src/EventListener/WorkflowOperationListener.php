@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
- * Class WorkflowOperationListener.
+ * Listen to API Platform requests, after the ReadListener (priority=4) and DeserializeListener (priority=2)
  *
  * @author Wesley O. Nichols <spanishwes@gmail.com>
  */
@@ -51,10 +51,9 @@ class WorkflowOperationListener
         }
 
         $requestContent = json_decode($request->getContent());
-        // Set the data attribute as subject,
-        // since the DTO will be deserialized to the data attribute
+        // Set the data attribute as subject, since the DTO will be deserialized to the data attribute
         $request->attributes->set('subject', $request->attributes->get('data'));
-        $request->attributes->set('workflow', $request->query->get('workflow'));
-        $request->attributes->set('transition', $requestContent->transition);
+        $request->attributes->set('workflowName', $request->query->get('workflow'));
+        $request->attributes->set('transitionName', $requestContent->transition);
     }
 }

@@ -36,7 +36,7 @@ class WorkflowActionContextBuilder implements SerializerContextBuilderInterface
 
         if (is_a($resourceClass, PotentialActionInterface::class, true)
             && isset($context['groups'])
-            && false === $normalization
+            && true === $normalization
         ) {
             $context['groups'][] = 'workflowAction:output';
         }

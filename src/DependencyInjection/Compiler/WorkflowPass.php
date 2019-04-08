@@ -13,11 +13,10 @@ namespace Wesnick\WorkflowBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 use Wesnick\WorkflowBundle\EventListener\SubjectValidatorListener;
 use Wesnick\WorkflowBundle\EventListener\WorkflowOperationListener;
-use Wesnick\WorkflowBundle\Serializer\WorkflowNormalizer;
+use Wesnick\WorkflowBundle\WorkflowActionGenerator;
 
 /**
  * Class WorkflowPass.
@@ -61,7 +60,7 @@ class WorkflowPass implements CompilerPassInterface
 //                );
         }
 
-        $container->getDefinition(WorkflowNormalizer::class)->setArgument('$enabledWorkflowMap', $classMap);
+        $container->getDefinition(WorkflowActionGenerator::class)->setArgument('$enabledWorkflowMap', $classMap);
         $container->getDefinition(WorkflowOperationListener::class)->setArgument('$enabledWorkflowMap', $classMap);
     }
 
