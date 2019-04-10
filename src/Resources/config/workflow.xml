@@ -41,11 +41,6 @@
         <service id="Wesnick\WorkflowBundle\Transformer\WorkflowDtoTransformer">
             <tag name="api_platform.data_transformer"/>
         </service>
-
-
-        <service id="Wesnick\WorkflowBundle\EventListener\SubjectValidatorListener">
-            <argument type="service" id="validator"/>
-        </service>
     </services>
 </container>
 
