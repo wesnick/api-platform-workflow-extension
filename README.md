@@ -3,6 +3,8 @@ WesnickWorkflowBundle
 
 ### This bundle is a work-in-progress.
 
+[![Build Status](https://travis-ci.org/wesnick/api-platform-workflow-extension.svg?branch=master)](https://travis-ci.org/wesnick/api-platform-workflow-extension)
+
 Introduction
 ------------
 
