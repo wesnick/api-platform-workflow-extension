@@ -51,12 +51,11 @@ class DefaultTransitionController
             $workflow = $this->registry->get($subject, $workflowName);
 
             if ($workflow->can($subject, $transitionName)) {
-
-                // Symfony 4.2 added context to workflow transitions
-                if (3 < Kernel::MAJOR_VERSION && 3 < Kernel::MINOR_VERSION) {
-                    $workflow->apply($subject, $transitionName, ['wesnick_workflow_dto' => $data]);
-                } else {
+                // Symfony 4.3 added context to workflow transitions
+                if (version_compare(Kernel::VERSION, '4.3.0', '<')) {
                     $workflow->apply($subject, $transitionName);
+                } else {
+                    $workflow->apply($subject, $transitionName, ['wesnick_workflow_dto' => $data]);
                 }
 
                 return $subject;

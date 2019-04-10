@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Wesnick\WorkflowBundle\Validation;
 
 use Symfony\Component\Workflow\Transition;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Workflow\Workflow;
 
 /**
  * Interface WorkflowValidationStrategyInterface.
@@ -24,11 +24,11 @@ interface WorkflowValidationStrategyInterface
     /**
      * Return the validation groups that should be used to validate a subject for a given transition in a given workflow.
      *
-     * @param object            $subject
-     * @param WorkflowInterface $workflow
-     * @param Transition        $transition
+     * @param object     $subject
+     * @param Workflow   $workflow
+     * @param Transition $transition
      *
      * @return array<string>
      */
-    public function getValidationGroupsForSubject($subject, WorkflowInterface $workflow, Transition $transition): array;
+    public function getValidationGroupsForSubject($subject, Workflow $workflow, Transition $transition): array;
 }

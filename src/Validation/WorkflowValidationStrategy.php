@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Wesnick\WorkflowBundle\Validation;
 
 use Symfony\Component\Workflow\Transition;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Workflow\Workflow;
 
 /**
  * Class WorkflowValidationStrategy.
@@ -21,7 +21,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
  */
 class WorkflowValidationStrategy implements WorkflowValidationStrategyInterface
 {
-    public function getValidationGroupsForSubject($subject, WorkflowInterface $workflow, Transition $transition): array
+    public function getValidationGroupsForSubject($subject, Workflow $workflow, Transition $transition): array
     {
         $groups = array_map(function ($state) use ($workflow) {
             return $workflow->getName().'_'.$state;

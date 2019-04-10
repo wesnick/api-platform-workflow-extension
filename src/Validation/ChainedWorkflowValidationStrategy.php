@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Wesnick\WorkflowBundle\Validation;
 
 use Symfony\Component\Workflow\Transition;
-use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Workflow\Workflow;
 
 /**
  * Class ChainedWorkflowValidationStrategy.
@@ -39,7 +39,7 @@ class ChainedWorkflowValidationStrategy implements WorkflowValidationStrategyInt
     /**
      * {@inheritdoc}
      */
-    public function getValidationGroupsForSubject($subject, WorkflowInterface $workflow, Transition $transition): array
+    public function getValidationGroupsForSubject($subject, Workflow $workflow, Transition $transition): array
     {
         $groups = [];
 
