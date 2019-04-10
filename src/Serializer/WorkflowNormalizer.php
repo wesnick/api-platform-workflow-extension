@@ -11,8 +11,12 @@ declare(strict_types=1);
 
 namespace Wesnick\WorkflowBundle\Serializer;
 
+use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerAwareInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Wesnick\WorkflowBundle\Model\PotentialActionInterface;
 use Wesnick\WorkflowBundle\WorkflowActionGenerator;
 
@@ -21,8 +25,11 @@ use Wesnick\WorkflowBundle\WorkflowActionGenerator;
  *
  * @author Wesley O. Nichols <spanishwes@gmail.com>
  */
-class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface
+class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface, ContextAwareDenormalizerInterface, SerializerAwareInterface
 {
+    /**
+     * @var ItemNormalizer
+     */
     private $decorated;
     private $customNormalizer;
     private $workflowActions;
@@ -63,5 +70,20 @@ class WorkflowNormalizer implements NormalizerInterface, CacheableSupportsMethod
         }
 
         return $this->decorated->normalize($object, $format, $context);
+    }
+
+    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    {
+        return $this->decorated->supportsDenormalization($data, $type, $format, $context);
+    }
+
+    public function denormalize($data, $class, $format = null, array $context = [])
+    {
+        return $this->decorated->denormalize($data, $class, $format, $context);
+    }
+
+    public function setSerializer(SerializerInterface $serializer)
+    {
+        $this->decorated->setSerializer($serializer);
     }
 }

@@ -2,7 +2,7 @@
     "name": "wesnick/api-platform-workflow-extension",
     "type": "symfony-bundle",
     "description": "Opinionated integration of api platform with workflow component",
-    "keywords": [ "workflow", "api platform" ],
+    "keywords": [ "workflow", "api-platform" ],
     "homepage": "https://github.com/wesnick/api-platform-workflow-extension",
     "license": "MIT",
     "authors": [

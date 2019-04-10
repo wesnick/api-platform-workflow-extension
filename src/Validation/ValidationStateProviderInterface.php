@@ -19,12 +19,14 @@ namespace Wesnick\WorkflowBundle\Validation;
 interface ValidationStateProviderInterface
 {
     /**
-     * Return validation groups for this object based on a proposed state property.
+     * Return validation groups for this subject based on a proposed state property.
      *
-     * @param string      $state
-     * @param string|null $marking
+     * This method should not alter the state of the subject.
+     *
+     * @param string $state
+     * @param string $workflowName
      *
      * @return array
      */
-    public function getGroupSequenceForState(string $state, ?string $marking): array;
+    public function getGroupSequenceForState(string $state, string $workflowName): array;
 }

@@ -27,6 +27,8 @@ class WorkflowValidationStrategy implements WorkflowValidationStrategyInterface
             return $workflow->getName().'_'.$state;
         }, $transition->getTos());
 
-        return array_unshift($groups, 'Default', $workflow->getName());
+        array_unshift($groups, 'Default', $workflow->getName());
+
+        return $groups;
     }
 }

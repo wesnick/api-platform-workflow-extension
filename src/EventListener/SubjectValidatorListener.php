@@ -32,7 +32,7 @@ class SubjectValidatorListener
      * @param ValidatorInterface                  $validator
      * @param WorkflowValidationStrategyInterface $validationStrategy
      */
-    public function __construct(ValidatorInterface $validator, ?WorkflowValidationStrategyInterface $validationStrategy)
+    public function __construct(ValidatorInterface $validator, WorkflowValidationStrategyInterface $validationStrategy)
     {
         $this->validator = $validator;
         $this->validationStrategy = $validationStrategy;

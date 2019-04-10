@@ -1,44 +1,33 @@
 language: php
 sudo: false
-
 cache:
   directories:
-    - $HOME/.composer/cache
+    - $HOME/.composer/cache/files
     - $HOME/symfony-bridge/.phpunit
-    - $HOME/.cache/pip
 
 env:
   global:
-        - PHPUNIT_FLAGS="-v"
-        - SYMFONY_PHPUNIT_DIR="$HOME/symfony-bridge/.phpunit"
-        - SYMFONY_PHPUNIT_VERSION=6.5
-
-branches:
-  only:
-    - master
-    - /^\d+\.\d+$/
+    - PHPUNIT_FLAGS="-v"
+    - SYMFONY_PHPUNIT_DIR="$HOME/symfony-bridge/.phpunit"
 
 matrix:
+  fast_finish: true
   include:
     # Minimum supported dependencies with the latest and oldest PHP version
-
-    - php: 7.1
-      env:
-        - COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
     - php: 7.2
-      env:
-        - COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
+      env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" SYMFONY_DEPRECATIONS_HELPER="weak_vendors"
+    - php: 7.1
+      env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" SYMFONY_DEPRECATIONS_HELPER="weak_vendors"
 
-    # Test the latest stable release
-
+      # Test the latest stable release
     - php: 7.1
     - php: 7.2
-      env:
-        - PHPUNIT_FLAGS="-v --coverage-clover=coverage.clover"
-        - COVERAGE=true
-        - DOCCHECK=true
+      env: COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text"
 
-      # Test LTS versions. Read more at https://github.com/symfony/lts
+      # Test LTS versions. This makes sure we do not use Symfony packages with version greater
+      # than 2 or 3 respectively. Read more at https://github.com/symfony/lts
+    - php: 7.2
+      env: DEPENDENCIES="symfony/lts:^2"
     - php: 7.2
       env: DEPENDENCIES="symfony/lts:^3"
 
@@ -47,7 +36,7 @@ matrix:
       env: STABILITY="dev"
 
   allow_failures:
-      # dev-master is allowed to fail.
+    # Dev-master is allowed to fail.
     - env: STABILITY="dev"
 
 before_install:
@@ -60,14 +49,9 @@ install:
   - if [[ "$COMPOSER_FLAGS" == *"--prefer-lowest"* ]]; then composer update --prefer-dist --no-interaction --prefer-stable --quiet; fi
   - composer update ${COMPOSER_FLAGS} --prefer-dist --no-interaction
   - ./vendor/bin/simple-phpunit install
-  - if [[ "$DOCCHECK" = true ]]; then pip install -qr Resources/doc/requirements.txt --user; fi
 
 script:
   - composer validate --strict --no-check-lock
+  # simple-phpunit is the PHPUnit wrapper provided by the PHPUnit Bridge component and
+  # it helps with testing legacy code and deprecations (composer require symfony/phpunit-bridge)
   - ./vendor/bin/simple-phpunit $PHPUNIT_FLAGS
-  - if [[ "$DOCCHECK" = true ]]; then make -C Resources/doc SPHINXOPTS='-nW' html; fi
-  - if [[ "$DOCCHECK" = true ]]; then make -C Resources/doc spelling; fi
-
-after_script:
-  - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
-  - if [[ "$COVERAGE" = true ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi

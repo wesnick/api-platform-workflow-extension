@@ -1,6 +1,15 @@
 <?php
 
-namespace Wesnick\WorkflowBundle\Controller;
+declare(strict_types=1);
+
+/*
+ * (c) 2019, Wesley O. Nichols
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Wesnick\WorkflowBundle\TestsController;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -28,7 +37,7 @@ class DefaultTransitionControllerTest extends TestCase
 
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('Expected object for workflow "workflow", got array');
-        $controller(new WorkflowDTO, [], 'workflow', 'transition');
+        $controller(new WorkflowDTO(), [], 'workflow', 'transition');
     }
 
     /**
@@ -44,7 +53,7 @@ class DefaultTransitionControllerTest extends TestCase
             $this->expectExceptionMessage(sprintf('Transition "%s" in Workflow "workflow" is not available.', $transition));
         }
 
-        $result = $controller(new WorkflowDTO, $subject, 'workflow', $transition);
+        $result = $controller(new WorkflowDTO(), $subject, 'workflow', $transition);
 
         $this->assertSame($subject, $result);
         $this->assertFalse($workflow->can($subject, $transition));

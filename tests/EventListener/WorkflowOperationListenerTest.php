@@ -9,7 +9,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Wesnick\WorkflowBundle\EventListener;
+namespace Wesnick\WorkflowBundle\TestsEventListener;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
