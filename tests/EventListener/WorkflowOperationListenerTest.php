@@ -9,11 +9,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Wesnick\WorkflowBundle\TestsEventListener;
+namespace Wesnick\WorkflowBundle\Tests\EventListener;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Wesnick\WorkflowBundle\EventListener\WorkflowOperationListener;
 use Wesnick\WorkflowBundle\Tests\Fixtures\ArticleWithWorkflow;
 
 class WorkflowOperationListenerTest extends TestCase

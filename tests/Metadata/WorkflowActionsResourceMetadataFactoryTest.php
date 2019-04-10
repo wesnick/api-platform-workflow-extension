@@ -9,12 +9,13 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Wesnick\WorkflowBundle\TestsMetadata;
+namespace Wesnick\WorkflowBundle\Tests\Metadata;
 
 use ApiPlatform\Core\Metadata\Resource\Factory\ResourceMetadataFactoryInterface;
 use ApiPlatform\Core\Metadata\Resource\ResourceMetadata;
 use PHPUnit\Framework\TestCase;
 use Wesnick\WorkflowBundle\Controller\DefaultTransitionController;
+use Wesnick\WorkflowBundle\Metadata\WorkflowActionsResourceMetadataFactory;
 use Wesnick\WorkflowBundle\Model\WorkflowDTO;
 use Wesnick\WorkflowBundle\Tests\Fixtures\ArticleWithWorkflow;
 
@@ -26,11 +27,11 @@ class WorkflowActionsResourceMetadataFactoryTest extends TestCase
     /**
      * @dataProvider getMetadata
      */
-    public function testCreateOperation(ResourceMetadata $before, ResourceMetadata $after, array $formats = [])
+    public function testCreateOperation(ResourceMetadata $before, ResourceMetadata $after)
     {
         $decoratedProphecy = $this->prophesize(ResourceMetadataFactoryInterface::class);
         $decoratedProphecy->create(ArticleWithWorkflow::class)->shouldBeCalled()->willReturn($before);
-        $this->assertSame($after, (new WorkflowActionsResourceMetadataFactory($decoratedProphecy->reveal()))->create(ArticleWithWorkflow::class));
+        $this->assertEquals($after, (new WorkflowActionsResourceMetadataFactory($decoratedProphecy->reveal()))->create(ArticleWithWorkflow::class));
     }
 
     public function getMetadata()

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Wesnick\WorkflowBundle\TestsController;
+namespace Wesnick\WorkflowBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -18,6 +18,7 @@ use Symfony\Component\Workflow\MarkingStore\MultipleStateMarkingStore;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\Tests\WorkflowBuilderTrait;
 use Symfony\Component\Workflow\Workflow;
+use Wesnick\WorkflowBundle\Controller\DefaultTransitionController;
 use Wesnick\WorkflowBundle\Model\WorkflowDTO;
 
 /**
