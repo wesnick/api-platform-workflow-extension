@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Wesnick\WorkflowBundle\Controller;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Registry;
 use Wesnick\WorkflowBundle\Model\WorkflowDTO;
@@ -50,7 +51,13 @@ class DefaultTransitionController
             $workflow = $this->registry->get($subject, $workflowName);
 
             if ($workflow->can($subject, $transitionName)) {
-                $workflow->apply($subject, $transitionName /*, ['dto' => $data] */);
+
+                // Symfony 4.2 added context to workflow transitions
+                if (3 < Kernel::MAJOR_VERSION && 3 < Kernel::MINOR_VERSION) {
+                    $workflow->apply($subject, $transitionName, ['wesnick_workflow_dto' => $data]);
+                } else {
+                    $workflow->apply($subject, $transitionName);
+                }
 
                 return $subject;
             }

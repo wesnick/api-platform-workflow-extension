@@ -137,9 +137,9 @@ class Action
     }
 
     /**
-     * @return ConstraintViolationList|null
+     * @return ConstraintViolationListInterface|null
      */
-    public function getError(): ?ConstraintViolationList
+    public function getError(): ?ConstraintViolationListInterface
     {
         return $this->error;
     }
