@@ -1,45 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="Wesnick\WorkflowBundle\Controller\DefaultTransitionController" public="true">
-            <argument type="service" id="workflow.registry"/>
-        </service>
-
-        <service id="Wesnick\WorkflowBundle\Metadata\WorkflowActionsResourceMetadataFactory" decorates="api_platform.metadata.resource.metadata_factory">
-            <argument type="service" id="Wesnick\WorkflowBundle\Metadata\WorkflowActionsResourceMetadataFactory.inner"/>
-        </service>
-        <service id="Wesnick\WorkflowBundle\Serializer\WorkflowActionContextBuilder" decorates="api_platform.serializer.context_builder">
-            <argument type="service" id="Wesnick\WorkflowBundle\Serializer\WorkflowActionContextBuilder.inner"/>
-        </service>
-        <service id="Wesnick\WorkflowBundle\Serializer\WorkflowActionNormalizer">
-            <argument type="service" id="serializer.normalizer.object"/>
-            <tag name="serializer.normalizer" prority="65"/>
-        </service>
-
-        <service id="Wesnick\WorkflowBundle\EventListener\WorkflowOperationListener">
-            <!-- Priotity is between ReadListener priorty=4 and DeserializeListener priority=2-->
-            <tag name="kernel.event_listener" event="kernel.request" priority="3" method="onKernelRequest"/>
-        </service>
-
-        <service id="Wesnick\WorkflowBundle\Serializer\ActionsDocumentationNormalizer">
-            <argument type="service" id="api_platform.hydra.normalizer.documentation"/>
-        </service>
-
-        <service id="Wesnick\WorkflowBundle\Serializer\WorkflowNormalizer" decorates="api_platform.jsonld.normalizer.item" decoration-priority="10">
-            <argument type="service" id="Wesnick\WorkflowBundle\Serializer\WorkflowNormalizer.inner"/>
-            <argument type="service" id="serializer.normalizer.object"/>
-            <argument type="service" id="Wesnick\WorkflowBundle\WorkflowActionGenerator"/>
-        </service>
-
         <service id="Wesnick\WorkflowBundle\WorkflowActionGenerator">
             <argument type="service" id="workflow.registry"/>
             <argument type="service" id="api_platform.iri_converter"/>
             <argument type="collection"/>  <!-- compiler pass -->
-        </service>
-        <service id="Wesnick\WorkflowBundle\Transformer\WorkflowDtoTransformer">
-            <tag name="api_platform.data_transformer"/>
         </service>
     </services>
 </container>

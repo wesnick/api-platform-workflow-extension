@@ -18,7 +18,8 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
-                ->booleanNode('enable_patch_api')->defaultTrue()
+                ->booleanNode('api_patch_transitions')->defaultTrue()->end()
+                ->booleanNode('workflow_validation_guard')->defaultTrue()->end()
             ->end()
         ;
 

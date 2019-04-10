@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 use Wesnick\WorkflowBundle\EventListener\SubjectValidatorListener;
 use Wesnick\WorkflowBundle\EventListener\WorkflowOperationListener;
+use Wesnick\WorkflowBundle\Validation\WorkflowValidationStrategyInterface;
 use Wesnick\WorkflowBundle\WorkflowActionGenerator;
 
 /**
@@ -38,8 +39,7 @@ class WorkflowPass implements CompilerPassInterface
 //        $directories[] = realpath(__DIR__.'/../../Model');
 //        $container->setParameter('api_platform.resource_class_directories', $directories);
 
-        // @TODO: add validator
-//        $validator        = $container->getDefinition(SubjectValidatorListener::class);
+        $config = $container->getExtensionConfig('wesnick_workflow');
 
         $classMap = [];
 
@@ -54,10 +54,11 @@ class WorkflowPass implements CompilerPassInterface
             $workflowShortName = $workflow->getArgument(3);
             $classMap[$className][] = $workflowShortName;
 
-            // @TODO: add validator
-//                $validator->addTag(
-//                    'kernel.event_listener', ['event' => 'workflow.'.$workflow.'.guard', 'method' => 'onGuard']
-//                );
+            if ($config[0]['workflow_validation_guard']) {
+                $container
+                    ->getDefinition(SubjectValidatorListener::class)
+                    ->addTag('kernel.event_listener', ['event' => 'workflow.'.$workflowShortName.'.guard', 'method' => 'onGuard']);
+            }
         }
 
         $container->getDefinition(WorkflowActionGenerator::class)->setArgument('$enabledWorkflowMap', $classMap);

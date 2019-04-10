@@ -58,11 +58,22 @@ class WorkflowActionGenerator
         $actions = [];
 
         foreach ($workflows as $workflow) {
-            /** @var Transition $transition */
-            foreach ($workflow->getEnabledTransitions($subject) as $transition) {
-                $transitionMeta = $workflow->getMetadataStore()->getTransitionMetadata($transition);
 
-                $blockers = $workflow->buildTransitionBlockerList($subject, $transition->getName());
+            $possibleTransitions = [];
+            $marking = $workflow->getMarking($subject);
+
+            foreach ($workflow->getDefinition()->getTransitions() as $transition) {
+                $froms = array_flip($transition->getFroms());
+                $intersection = array_intersect_key($froms, $marking->getPlaces());
+                if ($intersection) {
+                    $possibleTransitions[] = $transition;
+                }
+            }
+
+            foreach ($possibleTransitions as $transition) {
+                $transitionBlockerList = $workflow->buildTransitionBlockerList($subject, $transition->getName());
+
+                $transitionMeta = $workflow->getMetadataStore()->getTransitionMetadata($transition);
 
                 $url = sprintf(
                     '%s?%s',
@@ -83,7 +94,7 @@ class WorkflowActionGenerator
                 $currentAction->setDescription($transitionMeta['description'] ?? ucfirst($transition->getName()).' Action');
                 // @TODO: add sub status (available, unavailable, access denied, invalid)
 
-                foreach ($blockers as $blocker) {
+                foreach ($transitionBlockerList as $blocker) {
                     $parameters = $blocker->getParameters();
 
                     if (array_key_exists('original_violation', $parameters)) {

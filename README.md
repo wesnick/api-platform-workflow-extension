@@ -4,6 +4,7 @@ WesnickWorkflowBundle
 ### This bundle is a work-in-progress.
 
 [![Build Status](https://travis-ci.org/wesnick/api-platform-workflow-extension.svg?branch=master)](https://travis-ci.org/wesnick/api-platform-workflow-extension)
+[![Build Status](https://scrutinizer-ci.com/g/wesnick/api-platform-workflow-extension/badges/build.png?b=master)](https://scrutinizer-ci.com/g/wesnick/api-platform-workflow-extension/build-status/master)
 
 Introduction
 ------------
@@ -173,11 +174,21 @@ Features
 Documentation
 -------------
 
+- enable the module
+```yml
+# config/packages/wesnick_workflow.yaml
+
+wesnick_workflow:
+    api_patch_transitions: true      # default
+    workflow_validation_guard: true  # default
+```
+
 - To enable API support for your workflows:
 
   - Subject class must implement PotentialActionInterface
   - You can implement this interface either with PotentialActionsTrait or on your own, be sure to set serialization groups appropriately. The bundle automatically pushes the group ```workflowAction:output``` during denormalization. 
  - add descriptive messages for your workflow/transitions using workflow metadata
+
 
 
 Roadmap
