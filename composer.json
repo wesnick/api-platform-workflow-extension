@@ -20,7 +20,7 @@
         "symfony/framework-bundle": "^3.4.4 || ^4.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "*",
+        "symfony/phpunit-bridge": "^4.2",
         "phpspec/prophecy": "^1.8"
     },
     "autoload": {
