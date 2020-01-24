@@ -17,7 +17,7 @@
         "api-platform/core": "^2.4",
         "symfony/workflow": "^3.4 || ^4.0",
         "symfony/validator": "^3.4 || ^4.0",
-        "symfony/framework-bundle": "^3.4.4 || ^4.0"
+        "symfony/framework-bundle": "^3.4.4 || ^4.1.12"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.2"
